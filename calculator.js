@@ -1,4 +1,4 @@
-export class Calculator {
+class Calculator {
     constructor(x, y) {
       this.x = x;
       this.y = y;
@@ -8,4 +8,6 @@ export class Calculator {
         return this.x + this.y
     }
 }
+
+module.exports = Calculator
 

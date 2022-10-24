@@ -1,4 +1,4 @@
-import {Calculator} from "../calculator"
+const Calculator = require("../calculator")
 
 describe("Calculator", ()=> {
 
