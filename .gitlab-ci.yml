@@ -7,13 +7,13 @@ stages:
 before_script:
   - npm install
 
-test:
+unitTests:
   stage: test
   script:
     - npm run test
 
-eslint:
+ESLint:
   stage: analysis
   script:
-    - npm run test
+    - npm run eslint
 
