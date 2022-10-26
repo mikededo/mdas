@@ -2,13 +2,18 @@ image: node
 
 stages:
   - test
-  - deploy
+  - analysis
 
 before_script:
   - npm install
 
 test:
   stage: test
+  script:
+    - npm run test
+
+eslint:
+  stage: analysis
   script:
     - npm run test
 

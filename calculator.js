@@ -4,6 +4,9 @@ class Calculator {
       this.y = y;
     }
     
+
+
+    
     add(){
         return this.x + this.y
     }
