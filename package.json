@@ -2,7 +2,7 @@
   "name": "calculatorjs",
   "version": "1.0.0",
   "description": "JS Calculator",
-  "main": "calculator.js",
+  "main": "src/calculator.js",
   "scripts": {
     "test": "jest",
     "eslint": "eslint calculator.js",
