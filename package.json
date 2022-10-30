@@ -7,6 +7,10 @@
     "test": "jest",
     "eslint": "eslint calculator.js"
   },
+  "engines": {
+    "npm": "8.19.2",
+    "node": "16.16.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/mdas-lasalle/calculatorjs.git"
