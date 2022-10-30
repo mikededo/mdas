@@ -4,9 +4,11 @@
   "description": "JS Calculator",
   "main": "src/calculator.js",
   "scripts": {
-    "test": "jest",
+    "format": "prettier --write \"./**/*.js\" \"./**/*.json\" ",
     "lint": "eslint src/**/*.js",
-    "format": "prettier --write \"./**/*.js\" \"./**/*.json\" "
+    "prepare": "husky install",
+    "test": "jest",
+    "validate": "npm run lint && npm run format"
   },
   "engines": {
     "npm": "8.19.2",
@@ -31,6 +33,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "husky": "^8.0.0"
   }
 }
