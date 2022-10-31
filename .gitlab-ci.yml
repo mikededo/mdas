@@ -12,8 +12,8 @@ unitTests:
   script:
     - npm run test
 
-ESLint:
+lint:
   stage: analysis
   script:
-    - npm run eslint
+    - npm run lint
 
