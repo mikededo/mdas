@@ -11,4 +11,16 @@ describe('Calculator', () => {
       expect(C.add(...n)).toBe(r);
     });
   });
+
+  describe('subtraction', () => {
+    it.each([
+      { n: [4, 5], r: -9 },
+      { n: [4, 5, 4, 5], r: -18 },
+      { n: [0, 1, 2, 3, 4], r: -10 },
+      { n: [0, 0, 0, 0, 0], r: 0 },
+      { n: [0, 1, -2, 3, -4], r: 2 },
+    ])('should add and result $r', ({ n, r }) => {
+      expect(C.subtract(...n)).toBe(r);
+    });
+  });
 });
