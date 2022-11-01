@@ -46,4 +46,17 @@ describe('Calculator', () => {
       expect(C.divide(...n)).toBe(r);
     });
   });
+
+  describe('mod', () => {
+    it.each([
+      { n: [10, 0], r: NaN },
+      { n: [10, 5], r: 0 },
+      { n: [98765, 1000, 100, 10], r: 5 },
+      { n: [98765, 1000], r: 765 },
+      { n: [0, 10], r: 0 },
+      { n: [100, 7, 4, 3], r: 2 },
+    ])('should mod and result $r', ({ n, r }) => {
+      expect(C.mod(...n)).toBe(r);
+    });
+  });
 });
