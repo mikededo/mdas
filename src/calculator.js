@@ -3,7 +3,7 @@ const Calculator = {
     return values.reduce((prev, curr) => prev + curr, 0);
   },
   subtract(...values) {
-    return values.reduce((prev, curr) => prev - curr, 0);
+    return values.reduce((prev, curr) => prev - curr);
   },
   multiply(...values) {
     return values.reduce((prev, curr) => prev * curr);
