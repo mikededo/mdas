@@ -19,7 +19,7 @@ describe('Calculator', () => {
       { n: [0, 1, 2, 3, 4], r: -10 },
       { n: [0, 0, 0, 0, 0], r: 0 },
       { n: [0, 1, -2, 3, -4], r: 2 },
-    ])('should add and result $r', ({ n, r }) => {
+    ])('should subtract and result $r', ({ n, r }) => {
       expect(C.subtract(...n)).toBe(r);
     });
   });
