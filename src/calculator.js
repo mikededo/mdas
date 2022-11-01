@@ -14,6 +14,9 @@ const Calculator = {
   mod(...values) {
     return values.reduce((prev, curr) => prev % curr);
   },
+  power(...values) {
+    return values.reduce((prev, curr) => prev ** curr);
+  },
   bioperize([operations, values]) {
     if (!operations?.length) {
       throw Error('no operations received');
