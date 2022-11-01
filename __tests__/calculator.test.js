@@ -59,4 +59,15 @@ describe('Calculator', () => {
       expect(C.mod(...n)).toBe(r);
     });
   });
+
+  describe('power', () => {
+    it.each([
+      { n: [0, 0], r: 1 },
+      { n: [2, 2, 3, 4], r: 16777216 },
+      { n: [10, 10, 10], r: 1e100 },
+      { n: [10, -10], r: 1e-10 },
+    ])('should power and result $r', ({ n, r }) => {
+      expect(C.power(...n)).toBe(r);
+    });
+  });
 });
