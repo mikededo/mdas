@@ -14,6 +14,19 @@ const Calculator = {
   mod(...values) {
     return values.reduce((prev, curr) => prev % curr);
   },
+  bioperize([operations, values]) {
+    if (!operations?.length) {
+      throw Error('no operations received');
+    }
+    if (!values?.length) {
+      throw Error('no values received');
+    }
+
+    return values.reduce((prev, curr, i) => {
+      const op = operations[i - 1] ?? operations[operations.length - 1];
+      return op(prev, curr);
+    });
+  },
 };
 
 module.exports = Calculator;

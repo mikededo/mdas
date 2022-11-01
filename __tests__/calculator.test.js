@@ -59,4 +59,44 @@ describe('Calculator', () => {
       expect(C.mod(...n)).toBe(r);
     });
   });
+
+  describe('bioperize', () => {
+    it('should solve basic operations', () => {
+      expect(
+        C.bioperize([
+          [C.add, C.subtract, C.multiply],
+          [1, 2, 1, 4],
+        ]),
+      ).toBe(8);
+    });
+
+    it('should apply the last operation if there are at least 2 more values than operators', () => {
+      expect(C.bioperize([[C.add], [1, 2, 3, 4, 5]])).toBe(15);
+    });
+
+    it('should not apply further operations if there are more operations than values', () => {
+      expect(
+        C.bioperize([
+          [C.add, C.subtract, C.add, C.divide],
+          [1, 2],
+        ]),
+      ).toBe(3);
+    });
+
+    it('should throw an error if there are no operations', () => {
+      try {
+        C.bioperize([[], [1, 2, 3]]);
+      } catch ({ message }) {
+        expect(message).toBe('no operations received');
+      }
+    });
+
+    it('should throw an error if there are no values', () => {
+      try {
+        C.bioperize([[C.add]]);
+      } catch ({ message }) {
+        expect(message).toBe('no values received');
+      }
+    });
+  });
 });
