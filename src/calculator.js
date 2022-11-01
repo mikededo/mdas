@@ -1,12 +1,7 @@
-class Calculator {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  add() {
-    return this.x + this.y;
-  }
-}
+const Calculator = {
+  add(...values) {
+    return values.reduce((prev, curr) => prev + curr, 0);
+  },
+};
 
 module.exports = Calculator;
