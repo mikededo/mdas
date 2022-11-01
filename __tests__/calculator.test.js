@@ -24,6 +24,17 @@ describe('Calculator', () => {
     });
   });
 
+  describe('multiply', () => {
+    it.each([
+      { n: [1, 1, 1, 1], r: 1 },
+      { n: [1, 2, 3, 4, 5], r: 120 },
+      { n: [1, 2, 0, 3, 4], r: 0 },
+      { n: [1], r: 1 },
+    ])('should multiply and result $r', ({ n, r }) => {
+      expect(C.multiply(...n)).toBe(r);
+    });
+  });
+
   describe('divide', () => {
     it.each([
       { n: [4, 2, 2], r: 1 },
