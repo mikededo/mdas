@@ -23,4 +23,16 @@ describe('Calculator', () => {
       expect(C.subtract(...n)).toBe(r);
     });
   });
+
+  describe('divide', () => {
+    it.each([
+      { n: [4, 2, 2], r: 1 },
+      { n: [1, 1], r: 1 },
+      { n: [10], r: 10 },
+      { n: [10, 5, 0, 2], r: Infinity },
+      { n: [0, 5], r: 0 },
+    ])('should divide and result $r', ({ n, r }) => {
+      expect(C.divide(...n)).toBe(r);
+    });
+  });
 });
