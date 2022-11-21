@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: test-container
+          image: nginx
+          env:
+            - name: GAME_CONFIGURATION
+              valueFrom:
+                configMapKeyRef:
+                  name: all-configs
+                  key: game.properties
+          envFrom:
+            - configMapRef:
+                name: ui-config
+                optional: false
+          volumeMounts:
+            - name: game-config-volume
+              mountPath: /etc/config
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: game-config-volume
+          configMap:
+            name: game-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: nginx
