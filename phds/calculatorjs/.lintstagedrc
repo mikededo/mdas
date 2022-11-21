@@ -1,0 +1,4 @@
+{
+  "*.js": "npm run validate",
+  "*.{json,md}": "npm run format"
+}

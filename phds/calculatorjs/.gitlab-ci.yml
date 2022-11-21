@@ -1,0 +1,19 @@
+image: node
+
+stages:
+  - test
+  - analysis
+
+before_script:
+  - npm install
+
+unitTests:
+  stage: test
+  script:
+    - npm run test
+
+lint:
+  stage: analysis
+  script:
+    - npm run lint
+
