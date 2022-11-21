@@ -1,0 +1,25 @@
+version: '3.8' # en teoría ya no es necesario
+services:
+  log_store:
+    image: elasticsearch:7.17.7
+    container_name: log_store
+    environment:
+      - 'discovery.type=single-node'
+    networks:
+      - log_net
+    ports:
+      - 9200:9200
+  log_dashboard:
+    image: kibana:7.17.7
+    container_name: log_dashboard
+    environment:
+      - ELASTICSEARCH_HOSTS=http://log_store:9200
+    networks:
+      - log_net
+    ports:
+      - 5601:5601
+    depends_on:
+      - log_store
+networks:
+  log_net:
+    driver: bridge
