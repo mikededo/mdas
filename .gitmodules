@@ -1,3 +1,6 @@
 [submodule "dsi/github-stats"]
 	path = dsi/github-stats
 	url = git@github.com:mikededo/github-stats
+[submodule "phds/fileparser"]
+	path = phds/fileparser
+	url = git@gitlab.com:mikeddg/fileparser.git
