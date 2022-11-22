@@ -1,0 +1,3 @@
+[submodule "dsi/github-stats"]
+	path = dsi/github-stats
+	url = git@github.com:mikededo/github-stats
