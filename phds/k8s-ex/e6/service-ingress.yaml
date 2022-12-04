@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-users
+  labels:
+    app: http-users
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: http-users
+  template:
+    metadata:
+      name: http-users-pod
+      labels:
+        app: http-users
+    spec:
+      containers:
+        - name: http-echo
+          image: hashicorp/http-echo:alpine
+          ports:
+            - containerPort: 80
+          args: ["-text=users", "-listen=:80"]
+          volumeMounts:
+            - name: s-volume
+              mountPath: /etc/s-volume
+              readOnly: true
+      volumes:
+        - name: s-volume
+          secret:
+            secretName: secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-orders
+  labels:
+    app: http-orders
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: http-orders
+  template:
+    metadata:
+      name: http-orders-pod
+      labels:
+        app: http-orders
+    spec:
+      containers:
+        - name: http-orders
+          image: hashicorp/http-echo:alpine
+          ports:
+            - containerPort: 80
+          args: ["-text=orders", "-listen=:80"]
+          volumeMounts:
+            - name: s-volume
+              mountPath: /etc/s-volume
+              readOnly: true
+      volumes:
+        - name: s-volume
+          secret:
+            secretName: secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-users-service
+spec:
+  type: ClusterIP
+  selector:
+    app: http-users
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-orders-service
+spec:
+  type: ClusterIP
+  selector:
+    app: http-orders
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: http-echo-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - my-app.domain
+      secretName: tls-secret
+  rules:
+    - host: my-app.domain
+      http:
+        paths:
+          - pathType: Prefix
+            path: /users
+            backend:
+              service:
+                name: http-users-service
+                port:
+                  number: 8080
+          - pathType: Prefix
+            path: /orders
+            backend:
+              service:
+                name: http-orders-service
+                port:
+                  number: 8080
