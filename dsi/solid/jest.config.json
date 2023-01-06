@@ -1,0 +1,10 @@
+{
+  "testEnvironment": "node",
+  "roots": ["<rootDir>/src"],
+  "coverageReporters": ["json", "lcov", "text", "html"],
+  "transform": {
+    "^.+\\.ts?$": "ts-jest"
+  },
+  "testRegex": "(\\.|/)(test)\\.ts$",
+  "moduleFileExtensions": ["ts", "js", "json", "node"]
+}
