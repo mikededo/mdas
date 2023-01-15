@@ -1,0 +1,14 @@
+version: '3.1'
+services:
+  db:
+    image: ubuntu/mysql
+    command: --default-authentication-plugin=mysql_native_password --local-infile=ON
+    restart: always
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - ./data:/opt/data
+      - ./config/custom-config.cnf:/etc/mysql/conf.d/custom-config.cnf
+    ports:
+      - 3306:3306
