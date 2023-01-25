@@ -4,3 +4,6 @@
 [submodule "phds/fileparser"]
 	path = phds/fileparser
 	url = git@gitlab.com:mikeddg/fileparser.git
+[submodule "dm"]
+	path = dm
+	url = git@github.com:sdomingobasora/mds-restapi
