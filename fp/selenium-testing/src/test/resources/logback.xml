@@ -1,0 +1,23 @@
+<configuration>
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+    <encoder>
+      <pattern>%d{mm:ss.SSS} %highlight([%level]) %logger{36} - %highlight(%msg%n)</pattern>
+    </encoder>
+  </appender>
+
+  <appender class="ch.qos.logback.core.FileAppender" name="FILE">
+    <append>false</append>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <file>TestExecution.log</file>
+  </appender>
+
+  <logger level="TRACE" name="es.s2o">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <root level="TRACE">
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>

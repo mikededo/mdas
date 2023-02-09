@@ -1,0 +1,79 @@
+/**
+ * Plugins definitions
+ */
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("net.serenity-bdd:serenity-gradle-plugin:$serenityGradlePlugin")
+    }
+}
+plugins {
+    id 'idea'
+    id 'java'
+}
+apply plugin: 'net.serenity-bdd.serenity-gradle-plugin'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
+/**
+ * Dependencies
+ */
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    // Logger
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+
+    implementation("net.serenity-bdd:serenity-core:${serenityVersion}")
+    implementation group: 'org.jsoup', name: 'jsoup', version: jsoupVersion
+
+    // BDD: Cucumber - Serenity
+    testImplementation("io.cucumber:cucumber-core:${cucumberVersion}")
+    testImplementation("io.cucumber:cucumber-java:${cucumberVersion}")
+    testImplementation("net.serenity-bdd:serenity-cucumber:${serenityCucumberVersion}")
+    testImplementation("net.serenity-bdd:serenity-rest-assured:${serenityVersion}"){
+        exclude  (group: 'net.serenity-bdd',  module: "serenity-core")
+        exclude  (group: 'io.cucumber')
+    }
+    testImplementation "org.junit.platform:junit-platform-launcher:1.8.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+    testImplementation "org.junit.vintage:junit-vintage-engine:5.8.2"
+
+    // Assertions
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: assertjVersion
+}
+
+/**
+ * Compilation and testing properties
+ */
+tasks.withType(GroovyCompile) {
+    options.encoding = "UTF-8" // for Java compilation
+    groovyOptions.encoding = "UTF-8" // for Groovy compilation
+}
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:-options"
+    options.encoding = 'UTF-8'
+}
+test {
+    testLogging.showStandardStreams = true
+    ignoreFailures = true
+}
+compileJava.dependsOn clean
+test.finalizedBy(aggregate)
