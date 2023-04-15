@@ -7,3 +7,9 @@
 [submodule "dm"]
 	path = dm
 	url = git@github.com:sdomingobasora/mds-restapi
+[submodule "dsii/group"]
+	path = dsii/group
+	url = git@github.com:uricantasala/mdas-api-g3.git
+[submodule "dsii/single"]
+	path = dsii/single
+	url = git@github.com:uricantasala/mdas-api-g3.git
