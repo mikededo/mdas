@@ -1,0 +1,119 @@
+Pregunta 1:
+
+db.restaurants.countDocuments()
+
+Pregunta 2:
+
+db.restaurants.find({ cuisine: "American"})
+
+Pregunta 3:
+
+db.restaurants.find({ cuisine: "American", name: { $eq: /Cafe/ } })
+
+Pregunta 4:
+
+db.restaurants.find({
+    cuisine: "American", name: { $not: /Cafe/ }
+}, {
+    name: 1, borough: 1, _id: 0
+})
+
+Pregunta 5:
+
+db.restaurants.find({ grades: { $elemMatch: { date: { $gt: new Date("2014-11-31") } } } })
+
+Pregunta 6:
+
+db.restaurants.find({
+    grades: {
+        $elemMatch: {
+            date: {
+                $gt: new Date("2014-04-11")
+            }, grade: "A"
+        } 
+    } 
+})
+
+Pregunta 7:
+
+db.restaurants.find({
+    cuisine: "Chinese",
+    grades: {
+        $elemMatch: {
+            date: {
+                $gt: new Date("2013-01-11")
+            },
+            grade: "B",
+            score: 5
+        }
+    }
+})
+
+Pregunta 8:
+
+db.restaurants.aggregate([{ $group: { _id: "$cuisine" } }])
+
+Pregunta 9:
+
+db.restaurants.aggregate([
+    { $match: { borough: "Manhattan" } },
+    {
+        $group: {
+            _id: "$cuisine",
+            restaurantCount: { $sum: 1 }
+        }
+    },
+    {  $sort: { restaurantCount: -1 }
+}])
+
+Pregunta 10: 
+
+db.restaurants.aggregate([
+    { $unwind: "$grades" },
+    { 
+        $group: {
+            _id: "$name",
+            "GradeAvg": { $avg: "$grades.score" }
+        }
+    },
+    { $sort: { GradeAvg: -1 } },
+    { $limit: 5 }
+])
+
+Pregunta 11:
+
+db.restaurants.aggregate([
+    { $group: { _id: "$borough", count: { $sum: 1 } } },
+    { $match: { count: { $geq: 40, $leq: 60 } } }
+])
+
+Pregunta 12:
+
+db.restaurants.insertOne({
+  name: "Pa amb Tomaquet",
+  cuisine: "Mediterranean",
+  grades: [
+    {
+      date: new Date(),
+      score: 15,
+      grade: "A"
+    }
+  ]
+})
+
+
+Pregunta 13:
+
+db.restaurants.updateMany(
+  { cuisine: "Italian" },
+  { $set: { cuisine: "Mediterranean" } }
+)
+
+Pregunta 14:
+
+db.restaurants.deleteMany({ cuisine: "Mediterranean" })
+
+Pregunta 15:
+
+db.restaurants.drop()
+
