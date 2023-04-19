@@ -1,0 +1,129 @@
+Pregunta 1:
+
+MATCH (a:Airport)-[:MAIN_CITY]->(c:City{name:'London'}) RETURN a.name
+
+Pregunta 2:
+
+MATCH (:City{name:'London'})<-[:MAIN_CITY]-(:Airport)<-[a:ROUTE_TO]-(:Airport{name:'Barcelona International Airport'})
+match (airlines:Airline)
+where airlines.airlineId in a.airlineId
+RETURN DISTINCT airlines.name
+
+Pregunta 3:
+
+MATCH (:Airport{name:'Barcelona International Airport'})-[:ROUTE_TO{airlineId:a.airlineId}]->(:Airport)
+RETURN a.name, COUNT(*) AS num_routes
+ORDER BY num_routes DESC;
+
+Pregunta 4:
+
+MATCH (a:Airport)-[:MAIN_CITY]->(c:City)-[:IN]->(:Country{name: "Spain"})
+WHERE NOT (a)-[:ROUTE_TO]->()
+RETURN a.name, c.name
+
+Pregunta 5:
+
+MATCH (a:Airport)-[:MAIN_CITY]->(:City)-[:IN]->(c:Country)
+RETURN c.name, count(a)
+ORDER BY COUNT(a) DESC
+
+Pregunta 6:
+
+MATCH (origin:City {name: "Santa Clara"})<-[:MAIN_CITY]-(originAirport:Airport)-[:ROUTE_TO]->(layoverAirport:Airport)-[:ROUTE_TO]->(destinationAirport:Airport)-[:MAIN_CITY]->(destination:City)
+WHERE originAirport <> destinationAirport AND NOT (origin)-[:ROUTE_TO]->(destination)
+RETURN COUNT(DISTINCT destination) AS cities_count
+
+Pregunta 7:
+
+MATCH (origin:Airport)-[:ROUTE_TO]->(:Airport)-[:MAIN_CITY]->(city:City)
+WITH city, COUNT(*) AS route_count
+RETURN city.name, route_count
+ORDER BY route_count DESC
+LIMIT 5
+
+Pregunta 8:
+
+MATCH (a:Airport)
+WHERE a.name CONTAINS "International"
+RETURN a.name AS AirportName
+
+Pregunta 9:
+
+MATCH (origin:Airport)-[:MAIN_CITY]->(:City{name:"Barcelona"}),
+      (destination:Airport)-[:MAIN_CITY]->(:City{name:"Jersey"}),
+      path = shortestPath((origin)-[:ROUTE_TO*]->(destination))
+RETURN path
+
+Pregunta 10:
+
+MATCH (origin:Airport)-[:MAIN_CITY]->(:City{name:"Barcelona"}),
+      (layover:Airport)-[:MAIN_CITY]->(:City{name:"Montreal"}),
+      (destination:Airport)-[:MAIN_CITY]->(:City{name:"Jersey"}),
+      originLayoverPath = shortestPath((origin)-[:ROUTE_TO*]->(layover)),
+      layoverDestinationPath = shortestPath((layover)-[:ROUTE_TO*]->(destination))
+RETURN originLayoverPath, layoverDestinationPath
+
+Pregunta 11:
+
+MATCH (a:Airport)-[:MAIN_CITY]->(c:City)-[:IN]->(country:Country)
+WHERE c.name = "London" AND country.name = "United Kingdom"
+WITH a
+RETURN a.name, point.distance(
+    point({latitude: a.latitude, longitude: a.longitude}),
+    point({latitude: 51.5072, longitude: -0.1275})
+) as distanceToCenter
+ORDER BY distanceToCenter ASC
+LIMIT 1
+
+Pregunta 12:
+
+Se pueden crear también índices para agilizar las queries:
+CREATE INDEX FOR (a:Airport) ON (a.airportId);
+CREATE INDEX FOR (r:ROUTE_TO) ON (r.airlineId);
+
+Primer fichero:
+LOAD CSV FROM 'https://raw.githubusercontent.com/marivalle/openflights/master/data/routes.dat' AS row
+FIELDTERMINATOR ','
+CALL {
+    WITH row
+    MERGE (src:Airport{airportId: row[3]})
+    MERGE (dest:Airport{airportId: row[5]})
+    MERGE (src)-[:ROUTE_TO{airlineId: row[1]}]->(dest)
+}
+
+Segundo fichero:
+LOAD CSV FROM "https://raw.githubusercontent.com/marivalle/openflights/master/data/airports.dat" AS row
+CALL {
+    WITH row
+    MERGE (airport:Airport {airportId: row[0]})
+    ON CREATE SET airport.airportId=row[0], airport.name=row[1], airport.latitude=row[6], airport.longitude=row[7], airport.altitude=row[8]
+    ON MATCH SET airport.name=row[1], airport.latitude=row[6], airport.longitude=row[7], airport.altitude=row[8]
+    CREATE (city:City {name: row[2]})
+    MERGE (country:Country {name: row[3]})
+    MERGE (airport)-[:MAIN_CITY]->(city)
+    MERGE (city)-[:IN]->(country)
+}
+
+Tercer fichero:
+LOAD CSV from 'https://raw.githubusercontent.com/marivalle/openflights/master/data/airlines.dat' AS row
+FIELDTERMINATOR ','
+CALL {
+    WITH row
+    MERGE (airline:Airline{airlineId: row[0]})
+    ON CREATE SET airline.airlineId=row[0], airline.name=row[1], airline.alias=row[2], airline.callSign=row[5], airline.country=row[6]
+    ON MATCH SET airline.name=row[1], airline.alias=row[2], airline.callSign=row[5], airline.country=row[6]
+    MERGE (country:Country{name: row[6]})
+    MERGE (airline)-[:INCORPORATED_INTO]->(country)
+}
+
+Pregunta 13:
+
+- MATCH(a:Airport) RETURN COUNT(a)
+- MATCH(c:City) RETURN COUNT(c)
+- MATCH(c:Country) RETURN COUNT(c)
+- MATCH(a:Airline) RETURN COUNT(a)
+- MATCH ()-[:MAIN_CITY]() RETURN COUNT(*)
+- MATCH ()-[:ROUTE_TO]() RETURN COUNT(*)
+- MATCH ()-[:IN]() RETURN COUNT(*)
+- MATCH ()-[:INCORPORATED_INTO]() RETURN COUNT(*)
+
