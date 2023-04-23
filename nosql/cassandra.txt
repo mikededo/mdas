@@ -1,0 +1,133 @@
+Pregunta 1:
+
+CREATE KEYSPACE messaging_system
+WITH replication = {
+  'class': 'SimpleStrategy',
+  'replication_factor': '1'
+}
+
+Pregunta 2:
+
+CREATE TABLE users (
+  alias text PRIMARY KEY,
+  name text,
+  email text,
+  age int
+);
+
+CREATE TABLE chat (
+  chat_name text PRIMARY KEY,
+  users set<text>
+);
+
+CREATE TABLE message (
+  id int,
+  date timestamp,
+  author text,
+  content text,
+  destination text,
+  message_type text,
+  PRIMARY KEY (destination, id, date) 
+);
+
+CREATE TABLE unread_message (
+  user_alias text,
+  source text,
+  total counter,
+  PRIMARY KEY (user_alias, source)
+);
+
+CREATE TABLE file ( 
+  message_id uuid,
+  name text,
+  path text,
+  PRIMARY KEY (message_id, name)
+);
+
+Pregunta 3:
+
+Tabla users: Se ha escogido solo la columna de alias como clave primaria pues
+para hacer que los alias sean únicos.
+
+Tabla chat: Igual que con el users.alias, el nombre de la sala chat_name deberá
+ser único.
+
+Tabla message: A nivel de mensaje, nos es necesario poder obtener todos los
+mensajes enviados a una sala o por una persona. Por eso, el campo destination es
+el que se utilizará como la clave primaria de la tabla. Luego, cada mensaje
+tendrá una id diferente y una fecha. Si solo se escogiera la fecha, si se envian
+mensajes en la misma fecha y al mismo destinatario, se sobreescribirían.
+
+Tabla unread_message: En el caso de los mensajes no leídos queremos tener al
+recibidor como la clave primaria y luego el chat o el usuario que lo envía como
+llave de clustering, para poder filtrar correctamente.
+
+Pregunta 4:
+
+Pregunta 4.1:
+
+INSERT INTO users (alias, name, email, age)
+VALUES ('alice', 'Alice Doe', 'alice.doe@gmail.com', 18);
+INSERT INTO users (alias, name, email, age)
+VALUES ('bob', 'Bob Doe', 'bob.doe@gmail.com', 18);
+INSERT INTO users (alias, name, email, age)
+VALUES ('james', 'James Doe', 'james.doe@gmail.com', 24);
+
+Pregunta 4.2
+
+INSERT INTO chat (chat_name, users) VALUES ('general', {});
+INSERT INTO chat (chat_name, users) VALUES ('summer_party', {});
+
+Pregunta 4.3
+
+UPDATE chat 
+SET users = users +  {'alice', 'bob'}
+WHERE chat_name = 'general';
+UPDATE chat 
+SET users = users +  {'alice', 'bob', 'james'}
+WHERE chat_name = 'summer_party';
+
+Pregunta 4.4:
+
+INSERT INTO message (id, date, author, content, destination, message_type)
+VALUES (1, '2023-04-21', 'alice', 'This is the first message', 'summer_party', '1');
+INSERT INTO message (id, date, author, content, destination, message_type)
+VALUES (2, '2023-04-22', 'alice', 'This is the second message', 'summer_party', '1');
+
+UPDATE unread_message SET total += 1
+WHERE user_alias = 'bob' AND source = 'summer_party';
+UPDATE unread_message SET total += 1
+WHERE user_alias = 'james' AND source = 'summer_party';
+UPDATE unread_message SET total += 1
+WHERE user_alias = 'bob' AND source = 'summer_party';
+UPDATE unread_message SET total += 1
+WHERE user_alias = 'james' AND source = 'summer_party';
+
+Pregunta 4.5:
+
+UPDATE unread_message SET total -= 2
+WHERE user_alias = 'bob' AND source = 'summer_party';
+
+Pregunta 4.6:
+
+INSERT INTO message (id, date, author, content, user_destination, message_type)
+VALUES (3, '2023-04-22', 'alice', 'This message includes a file', 'james', '2');
+
+INSERT INTO file (message_id, name, path)
+VALUES(3, 'nosql.pdf', 'https://private.cdn.com/file/uh42umaasuun128AA');
+
+INSERT INTO unread_direct_messages (user_alias, message_id)
+VALUES ('james', 3);
+
+Pregunta 5:
+
+SELECT * FROM unread_message
+WHERE user_alias IN ('james', 'bob') AND source = 'summer_party';
+
+Pregunta 6:
+
+SELECT * FROM message WHERE chat_destination = 'summer_party';
+
+Pregunta 7:
+
+SELECT * FROM chat;
