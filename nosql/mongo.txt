@@ -84,7 +84,7 @@ Pregunta 11:
 
 db.restaurants.aggregate([
     { $group: { _id: "$borough", count: { $sum: 1 } } },
-    { $match: { count: { $geq: 40, $leq: 60 } } }
+    { $match: { count: { $gte: 40, $lte: 60 } } }
 ])
 
 Pregunta 12:
