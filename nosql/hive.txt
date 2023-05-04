@@ -1,0 +1,146 @@
+Pregunta 1:
+
+Pregunta 1.a:
+
+CREATE DATABASE sms_center;
+
+Pregunta 1.b:
+
+Creamos una tabla para poder tener toda la información:
+
+CREATE TABLE call_registry_raw (
+    id INT,
+    type STRING,
+    from_number STRING,
+    to_number STRING,
+    start_timestamp STRING,
+    end_timestamp STRING,
+    price STRING,
+    call_result STRING,
+    event_date STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ';'
+STORED AS TEXTFILE
+TBLPROPERTIES("skip.header.line.count"="1");
+
+LOAD DATA LOCAL INPATH "/opt/files/dataset.csv" OVERWRITE INTO TABLE call_registry_raw;
+
+Creamos una vista con el nombre de la tabla deseada donde se castean los float
+con coma:
+
+CREATE VIEW call_registry AS
+SELECT
+    id,
+    type,
+    from_number,
+    to_number,
+    start_timestamp,
+    end_timestamp,
+    FLOAT(REPLACE(price, ',', '.')) AS price,
+    call_result,
+    event_date
+FROM call_registry_raw;
+
+Pregunta 2:
+
+SELECT DISTINCT call_result
+FROM call_registry
+WHERE type = 'CALL';
+
+Pregunta 3:
+
+SELECT from_number, SUM(price) AS total FROM call_registry
+WHERE type = 'SMS' AND call_result = 'FAIL'
+GROUP BY from_number
+ORDER BY total DESC
+LIMIT 1;
+
+Pregunta 4:
+
+SELECT from_number, to_number, COUNT(*) as total
+FROM call_registry 
+WHERE type = 'CALL' AND call_result = 'ANSWERED'
+GROUP BY from_number, to_number
+ORDER BY total DESC
+LIMIT 1;
+
+Pregunta 5:
+
+SELECT
+    call_result,
+    COUNT(*) AS call_count
+FROM call_registry
+WHERE
+    YEAR(from_unixtime(unix_timestamp(event_date, 'yyyyMMdd'))) = 2018 AND
+    MONTH(from_unixtime(unix_timestamp(event_date, 'yyyyMMdd'))) = 12
+GROUP BY call_result;
+
+Pregunta 6:
+
+WITH ranked_users AS (
+    SELECT 
+        from_number,
+        type,
+        SUM(price) as total_price,
+        rank() OVER (PARTITION BY type ORDER BY SUM(price) DESC) as rank
+    FROM call_registry
+    GROUP BY from_number, type
+)
+SELECT *
+FROM ranked_users
+WHERE rank <= 5
+ORDER BY type, rank DESC;
+
+Pregunta 7:
+
+WITH call_users AS (
+    SELECT 
+        from_number,
+        'CALL' as type,
+        SUM(price) as total_price
+    FROM call_registry
+    WHERE type = 'CALL'
+    GROUP BY from_number
+    ORDER BY total_price DESC
+    LIMIT 5
+),
+sms_users AS (
+    SELECT 
+        from_number,
+        'SMS' as type,
+        SUM(price) as total_price
+    FROM call_registry
+    WHERE type = 'SMS'
+    GROUP BY from_number
+    ORDER BY total_price DESC
+    LIMIT 5
+)
+SELECT * FROM call_users
+UNION ALL
+SELECT * FROM sms_users
+ORDER BY type, total_price DESC;
+
+Pregunta 8:
+
+En las llamadas he obtenido los mismos valores pero en los SMS no, porqué todos
+los usuarios tienen el mismo total_price, y devuelve un orden diferente.
+
+Pregunta 9:
+
+SELECT from_number, SUM(UNIX_TIMESTAMP(end_timestamp) - UNIX_TIMESTAMP(start_timestamp)) AS total_time
+FROM calls
+WHERE event_date >= '2018-12-01' AND event_date < '2019-01-01'
+GROUP BY from_number
+HAVING total_time > 10800;
+
+Pregunta 10:
+
+CREATE TABLE favorite_numbers (
+    id INT,
+    called_numbers ARRAY<STRING>,
+);
+INSERT INTO favorite_numbers
+SELECT from_number, COLLECT_SET(to_number)
+FROM call_registry
+GROUP BY from_number;
