@@ -26,20 +26,33 @@ TBLPROPERTIES("skip.header.line.count"="1");
 
 LOAD DATA LOCAL INPATH "/opt/files/dataset.csv" OVERWRITE INTO TABLE call_registry_raw;
 
-Creamos una vista con el nombre de la tabla deseada donde se castean los float
-con coma:
+Creamos la tabla final:
 
-CREATE VIEW call_registry AS
+CREATE TABLE call_registry (
+  id INT,
+  type STRING,
+  from_number STRING,
+  to_number STRING,
+  start_timestamp TIMESTAMP,
+  end_timestamp TIMESTAMP,
+  price FLOAT,
+  call_result STRING,
+  event_date STRING
+);
+
+Insertamos la información a la tabla final:
+
+INSERT INTO call_registry
 SELECT
-    id,
-    type,
-    from_number,
-    to_number,
-    start_timestamp,
-    end_timestamp,
-    FLOAT(REPLACE(price, ',', '.')) AS price,
-    call_result,
-    event_date
+  id,
+  type,
+  from_number,
+  to_number,
+  from_unixtime(unix_timestamp(start_timestamp,'MM/dd/yyyy HH:mm'),'yyyy-MM-dd HH:mm:ss') AS start_timestamp,
+  from_unixtime(unix_timestamp(end_timestamp,'MM/dd/yyyy HH:mm'),'yyyy-MM-dd HH:mm:ss') AS end_timestamp,
+  FLOAT(REPLACE(price, ',', '.')) AS price,
+  call_result,
+  event_date
 FROM call_registry_raw;
 
 Pregunta 2:
@@ -72,8 +85,7 @@ SELECT
     COUNT(*) AS call_count
 FROM call_registry
 WHERE
-    YEAR(from_unixtime(unix_timestamp(event_date, 'yyyyMMdd'))) = 2018 AND
-    MONTH(from_unixtime(unix_timestamp(event_date, 'yyyyMMdd'))) = 12
+    YEAR(start_timestamp) = 2018 AND MONTH(start_timestamp) = 12
 GROUP BY call_result;
 
 Pregunta 6:
@@ -129,7 +141,7 @@ los usuarios tienen el mismo total_price, y devuelve un orden diferente.
 Pregunta 9:
 
 SELECT from_number, SUM(UNIX_TIMESTAMP(end_timestamp) - UNIX_TIMESTAMP(start_timestamp)) AS total_time
-FROM calls
+FROM call_registry
 WHERE event_date >= '2018-12-01' AND event_date < '2019-01-01'
 GROUP BY from_number
 HAVING total_time > 10800;
@@ -140,6 +152,7 @@ CREATE TABLE favorite_numbers (
     id INT,
     called_numbers ARRAY<STRING>,
 );
+
 INSERT INTO favorite_numbers
 SELECT from_number, COLLECT_SET(to_number)
 FROM call_registry
