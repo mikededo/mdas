@@ -1,0 +1,223 @@
+1. Pregunta 1
+
+En el JSON de respuesta, comprobamos el resultado en: hits.total.value.
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{"size": 0, "track_total_hits": true}'
+
+curl -s \
+  -X GET http://localhost:9200/amazon_reviews/_search \
+  -H 'Content-Type: application/json' \
+  -d '{"size": 0, "track_total_hits": true}'
+
+Pregunta 2:
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "query": {
+      "match": {
+        "CUISINE DESCRIPTION": {
+          "query": "Seafood"
+        }
+      } 
+    } 
+  }'
+
+Pregunta 3:
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "query": {
+      "term": {
+        "CUISINE DESCRIPTION": {
+          "value": "Seafood",
+          "boost": 1.0
+        }
+      } 
+    } 
+  }'
+
+Al marcar un campo como texto, Elastic realiza cambios en él, de forma que
+realizar una búsqueda exacta se complique en campos de tipo texto. Esta es la
+razón por la que no se devuelven resultados.
+
+Pregunta 4:
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "query": {
+      "bool": {
+        "must": [
+          { "match": { "CUISINE DESCRIPTION": { "query": "Seafood" } } }
+        ],
+        "must_not": [
+          { "match": { "BORO": { "query": "Manhattan" } } }
+        ]
+      } 
+    } 
+  }'
+
+Pregunta 5:
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "size": 0,
+    "query": {
+      "bool": {
+        "should": [
+          { "match": { "VIOLATION DESCRIPTION": "mice" } },
+          { "match": { "VIOLATION DESCRIPTION": "rats" } }
+        ]
+      }
+    },
+    "aggs": {
+      "barrios": {
+        "terms": {
+          "field": "BORO"
+        },
+        "aggs": {
+          "total_inspecciones": {
+            "sum": {
+              "field": "VIOLATION DESCRIPTION.keyword"
+            }
+          }
+        }
+      }
+    }
+  }'
+
+Pregunta 6:
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "size": 0,
+    "aggs": {
+      "inspecciones": {
+        "date_histogram": {
+          "field": "INSPECTION DATE",
+          "calendar_interval": "year",
+          "min_doc_count": 1
+        }
+      }
+    }
+  }'
+
+Pregunta 7:
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "size": 0,
+      "aggs": {
+        "restaurantes_por_flag": {
+          "terms": { "field": "CRITICAL FLAG" }
+        }
+      }
+    }'
+
+Pregunta 8:
+
+curl -s \
+  -X POST http://localhost:9200/nyc_restaurants_inspection/_delete_by_query \
+  -H 'Content-Type: application/json' \
+  -d '{ "query": { "match": { "BORO": "Manhattan" } } }'
+
+curl -s \
+  -X GET http://localhost:9200/nyc_restaurants_inspection/_search \
+  -H 'Content-Type: application/json' \
+  -d '{ "query": { "match": { "BORO": { "query": "Manhattan" } } } }'
+
+Pregunta 9:
+
+Cambiamos el íncide con:
+
+curl -s \
+  -X PUT http://localhost:9200/amazon_reviews_updated \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "mappings": {
+    "properties": {
+      "reviews": {
+        "properties": {
+          "date": { "type": "date" },
+          "dateAdded": { "type": "date" },
+          "dateSeen": { "type": "date" },
+          "doRecommend": { "type": "boolean" },
+          "id": {
+            "type": "text",
+            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+          },
+          "numHelpful": { "type": "integer" },
+          "rating": { "type": "integer" },
+          "sourceURLs": {
+            "type": "text",
+            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+          },
+          "text": {
+            "type": "text",
+            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+          },
+          "title": {
+            "type": "text",
+            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+          },
+          "username": {
+            "type": "text",
+            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+          }
+        }
+      }
+    }
+  } 
+  }'
+
+curl -s \
+  -X PUT http://localhost:9200/amazon_reviews_updated \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "mappings": {
+      "properties": {
+        "reviews": {
+          "properties": {
+            "doRecommend": { "type": "boolean" },
+            "rating": { "type": "integer" }
+          }
+        }
+      }
+    } 
+  }'
+
+curl -s \
+  -X POST http://localhost:9200/_reindex \
+  -H 'Content-Type: application/json' \
+  -d '{
+      "source": { "index": "amazon_reviews" },
+      "dest": { "index": "amazon_reviews_updated" }
+   }'
+
+curl -s \
+  -X GET http://localhost:9200/amazon_reviews/_search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "query": {
+      "bool": {
+        "must": [
+          { "term": { "rating": 5 } },
+          { "term": { "doRecommend": false } }
+        ]
+      }
+    }  
+  }'
