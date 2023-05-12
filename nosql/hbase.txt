@@ -1,0 +1,59 @@
+1.
+
+create_namespace 'accidentes_nmspc'
+create 'accidentes_nmspc:accidentes', 'lugar', 'fecha_evento', 'detalles'
+create 'accidentes:fecha_evento', 'nombre_dia', 'año', 'mes', 'nombre_mes', 'dia', 'hora' 
+create 'accidentes:detalles', 'turno', 'tipo_accidente'
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv \
+-Dimporttsv.separator=';' \
+-Dimporttsv.columns="HBASE_ROW_KEY, lugar:distrito, lugar:barrio, fecha_evento:nombre_dia, fecha_evento:año, fecha_evento:mes, fecha_evento:nombre_mes, fecha_evento:dia, fecha_evento:hora, detalles:turno, detalles:tipo_accidente" 'accidentes_nmspc:accidentes' /files/accidentes_bcn_2018.csv
+2.
+
+count 'accidentes_nmspc:accidentes'
+
+3.
+
+import org.apache.hadoop.hbase.filter.RowFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.SubstringComparator
+scan 'accidentes_nmspc:accidentes', { FILTER => RowFilter.new(CompareFilter::CompareOp.valueOf('NOT_EQUAL'), SubstringComparator.new('2018'))}
+
+4.
+
+import org.apache.hadoop.hbase.filter.RowFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.SubstringComparator
+scan 'accidentes_nmspc:accidentes', { FILTER => RowFilter.new(CompareFilter::CompareOp.valueOf('EQUAL'), SubstringComparator.new('Código Expediente'))}
+
+Al obtener la row key a eliminar, ejecutamos:
+
+deleteall 'accidentes_nmspc:accidentes', 'C\u00F3digo Expediente'
+
+5.
+
+scan 'accidentes_nmspc:accidentes', {LIMIT => 5}
+
+6.
+
+scan 'accidentes_nmspc:accidentes', {FILTER => "PageFilter(5)"}
+
+7. 
+
+scan 'accidentes_nmspc:accidentes', {FILTER => "ValueFilter( =, 'binary:Desconegut')" }
+
+8.
+
+scan 'accidentes_nmspc:accidentes', { FILTER =>
+  "SingleColumnValueFilter('detalles', 'tipo_accidente', =, 'binary:Atropellament') \
+  AND SingleColumnValueFilter('fecha_evento', 'nombre_dia', =, 'binary:Lunes') \
+  AND SingleColumnValueFilter('detalles', 'turno', =, 'binary:Noche') "
+}
+
+9.
+
+put 'accidentes_nmspc:accidentes', '2018S008673', 'fecha_evento:nombre_dia', 'Martes'
+put 'accidentes_nmspc:accidentes', '2018S008673', 'fecha_evento:año', '2018'
+put 'accidentes_nmspc:accidentes', '2018S008673', 'fecha_evento:mes', '11'
+put 'accidentes_nmspc:accidentes', '2018S008673', 'fecha_evento:nombre_mes', 'noviembre'
+put 'accidentes_nmspc:accidentes', '2018S008673', 'fecha_evento:dia', '13'
+
