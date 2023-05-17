@@ -1,0 +1,61 @@
+1. En el caso del buscador de productos, la base de datos que más nos convendría
+   sería una base de datos de tipo ElasticSearch, ya que nos permitiría relizar
+   búsquedas por nombre o por más de un parámetro con el fin de conseguir algun
+   match con algun producto o propiedad del producto. Sin ir más lejos, Elastic
+   es ideal para desarrollar un motor de búsqueda o similares.
+2. Para la sección principal del producto, la cual contiene las imágenes,
+   información resumida del producto, puntuación, opiniones y demás, nos
+   interesaría guardarlo en una base de datos de tipo MongoDb. La razón es
+   porque es una base de datos que nos permite una elevada flexibilidad. Esta
+   flexibilidad nos es útil, si, por ejemplo, se quisiera añadir un nuevo campo
+   al producto. Además, podemos guardar en el mismo documento información
+   variada como las imágenes, las opiniones, FAQ del producto, etc. De este
+   modo, al buscar el producto, obtendríamos toda su información con una única y
+   simple query.
+3. Para la sección de comprados recientemente, una de las opciones convenientes
+   sería Neo4j. Al ser una base de datos basada en grafos, nos permite
+   establecer relaciones entre nodos de forma muy simple. Además, estas
+   relaciones nos permitirían obtener patrones de compra entre clientes, los
+   cuales se podrían utilizar para ofrecer mejores recomendaciones de productos.
+   Alternativamente, se podría utilizar Cassandra ya que está adaptado para ser
+   utilizada con un gran volúmen de datos. A partir de estos datos, se podrían
+   generar recomendaciones para los diferentes productos.
+4. Para la sección de los productos recién vistos por clientes que vieron el
+   producto actual, se podría utilizar de nuevo Neo4j, por la misma razón que la
+   expuesta en el punto 3. Fácilmente se podría construir un grafo si se trackea
+   el "camino" seguido por un usuario, de un producto a otro.
+5. El apartado de detalles técnicos se podría utilizar MongoDb de nuevo. Una vez
+   más, la flexibilidad de MongoDb es la más adecuada ya que el contenido se
+   puede guardar en un JSON, permitiendo que cada producto pudiese tener
+   información en formatos diferentes.
+6. Una vez más, la selección se divide entre Cassandra y Neo4j. Se debería de
+   tener en consideración cual es el objetivo de este apartado y de la posible
+   cantidad de información que va a ser necesario almacenar. En función de esto,
+   se debería seleccionar una u otra, aunque ambas podrían llevar a cabo la
+   tarea fácilmente.
+7. En el caso de las preguntas y respuestas de los clientes, se podría almacenar
+   perfectamente en una base de datos MongoDb. Las preguntas y respuestas es
+   posible que varien y no esten estructuradas. Además, permitirían la
+   escalabilidad de estos en caso de querer añadir nuevas features a dicha
+   sección.
+8. En la sección de puntuación de los clientes, estas de pueden guardar en una
+   base de datos de ElasticSearch. De este modo, podemos almacenar los datos de
+   las opiniones y puntuaciones para luego indexarlos con el objetivo de
+   realizar búsquedas y/o cálculos con las diferentes puntuaciones. En este
+   caso, las funciones de agregación de Elastic nos serían de gran ayuda.
+9. La sección de reviews es muy parecida a la de FAQ, de forma que MongoDb nos
+   sería, una vez más, de gran utilidad. Podremos almacenar en cada documento
+   toda la información de la review, tanto el comentario, como imágenes,
+   información del usuario. 
+10. La sección de productos vistos recientemente, podría guardarse en una base
+    de datos de Elastic. El objetivo de utilizar Elastic sería para poder
+    realizar búsquedas del producto de forma más rápida. Se indexarían los
+    productos visitados y se guardaría toda la información necesaria sobre este.
+    Luego, senzillamente deberíamos buscar por el usuario o el campo, o conjunto
+    de campos, que nos permitan acceder a la información requerida.
+11. Finalmente, la sección del historial de búsqueda se podría guardar en una
+    base de dato de MongoDb. Una vez más, su flexibilidad nos permitiría guardar
+    variedad de datos en el documento. Podremos realizar consultas a los
+    resultados o filtrar estos mismos. Además, la paginación se puede realizar
+    de forma muy senzilla con MongoDb, mostrando cierta candidad de productos
+    por query.

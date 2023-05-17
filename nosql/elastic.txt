@@ -142,10 +142,10 @@ curl -s \
 
 Pregunta 9:
 
-Cambiamos el íncide con:
+Cambiamos el índice con:
 
 curl -s \
-  -X PUT http://localhost:9200/amazon_reviews_updated \
+  -X PUT http://localhost:9200/amazon_reviews_v2 \
   -H 'Content-Type: application/json' \
   -d '{
     "mappings": {
@@ -161,7 +161,7 @@ curl -s \
             "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
           },
           "numHelpful": { "type": "integer" },
-          "rating": { "type": "integer" },
+          "rating": { "type": "float" },
           "sourceURLs": {
             "type": "text",
             "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
@@ -182,31 +182,19 @@ curl -s \
       }
     }
   } 
-  }'
-
-curl -s \
-  -X PUT http://localhost:9200/amazon_reviews_updated \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "mappings": {
-      "properties": {
-        "reviews": {
-          "properties": {
-            "doRecommend": { "type": "boolean" },
-            "rating": { "type": "integer" }
-          }
-        }
-      }
-    } 
-  }'
+}'
 
 curl -s \
   -X POST http://localhost:9200/_reindex \
   -H 'Content-Type: application/json' \
   -d '{
-      "source": { "index": "amazon_reviews" },
-      "dest": { "index": "amazon_reviews_updated" }
-   }'
+    "source": { "index": "amazon_reviews" },
+    "dest": { "index": "amazon_reviews_v2" },
+    "script": {
+      "lang": "painless",
+      "source": "for (def field : ctx._source.entrySet()) { if (field.getValue() == \"TRUE\") { ctx._source[field.getKey()] = true; } else if (field.getValue() == \"FALSE\") { ctx._source[field.getKey()] = false; } }"
+    }
+  }'
 
 curl -s \
   -X GET http://localhost:9200/amazon_reviews/_search \
