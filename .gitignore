@@ -1,3 +1,6 @@
 .DS_Store
 .pdf
 .zip
+.metals
+.vscode
+.scala-build
