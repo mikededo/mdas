@@ -2,11 +2,21 @@ Pregunta 1:
 
 Pregunta 1.a:
 
-CREATE DATABASE sms_center;
+Copiamos el fichero a hdfs:
+
+hdfs dfs -put /opt/files/dataset.csv /user/hive/warehouse/
+
+Para comprobar que existe:
+
+hdfs dfs -cat /user/hive/warehouse/dataset.csv
 
 Pregunta 1.b:
 
-Creamos una tabla para poder tener toda la información:
+Creamos una base de datos:
+
+CRETE DATABASE sms_center;
+
+Creamos una tabla externa para poder tener toda la información del fichero de hdfs:
 
 CREATE TABLE call_registry_raw (
     id INT,
@@ -22,11 +32,10 @@ CREATE TABLE call_registry_raw (
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ';'
 STORED AS TEXTFILE
+LOCATION "/user/hive/warehouse"
 TBLPROPERTIES("skip.header.line.count"="1");
 
-LOAD DATA LOCAL INPATH "/opt/files/dataset.csv" OVERWRITE INTO TABLE call_registry_raw;
-
-Creamos la tabla final:
+Creamos la tabla final, con la información correcta:
 
 CREATE TABLE call_registry (
   id INT,
@@ -73,7 +82,7 @@ Pregunta 4:
 
 SELECT from_number, to_number, COUNT(*) as total
 FROM call_registry 
-WHERE type = 'CALL' AND call_result = 'ANSWERED'
+WHERE type = 'CALL' AND call_result <> 'ANSWERED'
 GROUP BY from_number, to_number
 ORDER BY total DESC
 LIMIT 1;
@@ -85,7 +94,7 @@ SELECT
     COUNT(*) AS call_count
 FROM call_registry
 WHERE
-    YEAR(start_timestamp) = 2018 AND MONTH(start_timestamp) = 12
+    YEAR(start_timestamp) = 2018 AND MONTH(start_timestamp) = 12 AND type = 'CALL'
 GROUP BY call_result;
 
 Pregunta 6:
@@ -140,17 +149,25 @@ los usuarios tienen el mismo total_price, y devuelve un orden diferente.
 
 Pregunta 9:
 
-SELECT from_number, SUM(UNIX_TIMESTAMP(end_timestamp) - UNIX_TIMESTAMP(start_timestamp)) AS total_time
-FROM call_registry
-WHERE event_date >= '2018-12-01' AND event_date < '2019-01-01'
-GROUP BY from_number
-HAVING total_time > 10800;
+SELECT from_number, SUM(duration) as total_duration 
+FROM (
+  SELECT from_number, UNIX_TIMESTAMP(end_timestamp) - UNIX_TIMESTAMP(start_timestamp) as duration 
+  FROM call_registry 
+  WHERE type = 'CALL' AND event_date LIKE '201812%' 
+  UNION ALL 
+  SELECT to_number, UNIX_TIMESTAMP(end_timestamp) - UNIX_TIMESTAMP(start_timestamp) as duration 
+  FROM call_registry 
+  WHERE type = 'CALL' AND event_date LIKE '201812%'
+) as calls 
+GROUP BY from_number 
+HAVING total_duration > 10800 
+ORDER BY total_duration DESC;
 
 Pregunta 10:
 
 CREATE TABLE favorite_numbers (
     id INT,
-    called_numbers ARRAY<STRING>,
+    called_numbers ARRAY<STRING>
 );
 
 INSERT INTO favorite_numbers
