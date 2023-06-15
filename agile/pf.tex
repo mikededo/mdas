@@ -1,0 +1,206 @@
+\documentclass[a4paper, 11pt, oneside]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[pagestyles]{titlesec}
+\usepackage{titletoc}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[a4paper, margin = 2.5cm, headheight=14pt]{geometry}
+\usepackage[hidelinks, colorlinks = false]{hyperref}
+\usepackage[bottom]{footmisc}
+\usepackage{bookmark}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage[labelfont = bf, hypcap = false]{caption}
+\usepackage{etoolbox}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{float}
+\usepackage[titles]{tocloft}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage{subfiles}
+
+\date{}
+
+\title{
+\textbf{\huge Metodolgías Ágiles}
+\\[8pt]
+{Práctica final}
+}
+\author{Miquel de Domingo i Giralt}
+
+\setmainfont{Helvetica Neue}[BoldFont = Helvetica Neue Bold]
+
+% Variable with the page that keeps the footer style
+\def\footerstyle{- \fontsize{10pt}{10pt}\selectfont\thepage\ -}
+\pagestyle{fancy}
+% Remove the horizontal bar from the header
+\renewcommand{\headrulewidth}{0pt}
+% Clear everythihg
+\fancyhf{}
+% Set header style
+\rhead{\small\textit{\nouppercase{\rightmark}}}
+% Set the footer page number
+\fancyfoot[C]{\footerstyle}
+% Update the footer in chapter and other plain views
+\fancypagestyle{plain}{%
+	\renewcommand{\headrulewidth}{0pt}%
+	\fancyhf{}%
+	\fancyfoot[C]{\footerstyle}%
+}
+
+\setlength\parindent{0pt}
+
+\titlespacing{\chapter}{0pt}{-32pt}{12pt}
+
+\begin{document}
+\maketitle
+\newpage
+\section{Problema}
+Acudes a una organización porque puedes aportar tu trabajo como Scrum Master.
+Hay un equipo trabajando con Scrum desde hace un par de meses, y por lo que te
+cuentan parece que no haya mejorado desde la situación anterior.
+\\[8pt]
+Se introdujo Scrum como proceso para ganar en visibilidad sobre el proyecto,
+pensando que aceleraría el proceso de desarrollo, pero sin pensar en los cambios
+culturales que se debían introducir a la vez. El Scrum Master nombrado seguía en
+funciones de jefe de proyecto, y la mayoría de la gente no se planteaba la
+auto-organización como un objetivo deseable todavía, pues estaban cómodas en su
+función de acatar órdenes.
+\\[8pt]
+Además, la desconfianza existente había creado pesados procesos manuales de
+aprobaciones de requisitos y de su verificación, para trabajar con el cliente
+interno que realiza la toma de decisiones del producto.
+\\[8pt]
+Se te ofrece trabajar como Scrum Master del equipo, y el actual Scrum Master
+pasa a ser Product Owner, pues es quien mejor conoce el producto desarrollado.
+\\[8pt]
+De las 6 personas del equipo, existían conflictos con dos de ellas y el antiguo
+SM, pues rivalizaban por el poder jerárquico dentro de la organización que tenía
+el primero. Ahora se encuentran molestas, pues ven que las metodologías ágiles
+diluyen esa posición que buscaban.
+\\[8pt]
+Los responsables de la organización tienen las miradas puestas en este equipo
+porque el proyecto es estratégico, y apoyan las iniciativas de cambio, pero no
+comprenden todavía el alcance de un cambio cultural basado en los principios
+ágiles.
+\begin{enumerate}
+	\item Descríbeme las ventajas y desventajas de ser nombrado superior
+	      jerárquico en ese equipo, para hacer de Scrum Master, y de no serlo.
+	\item ¿Alrededor de qué giraría tu primera reunión de coaching individual
+	      con cada miembro del equipo?
+	\item ¿Cómo podrías crear objetivos globales del equipo?
+\end{enumerate}
+\newpage
+\section{Solución}
+\subsection{Problema 1}
+Entrar en un nuevo equipo es siempre un proceso complicado y en función de la
+unión del equipo puede hacerse bastante tedioso. Además, en un entorno en el que
+el ambiente de equipo no es el idóneo, este proceso puede complicarse aún más.
+\\[8pt]
+En primera instancia, destacaría las siguientes desventajas (siempre es más
+fácil ver los problemas). De entrada voy a ser juzgado por las soluciones que
+proponga, y en función de la toxicidad de los compañeros que me ven como su
+rival, estos pueden llegar a dificultar la prueba de las propuestas. También, de
+las personas nuevas se esperan cambios radicales, y, en la sociedad de hoy en
+día, se esperan cambios a corto plazo. Desde mi punto de vista, será interesante
+concienciar a los integrantes del grupo de la necesidad de cambio tanto
+individual como en conjunto, y que en función de la situación actual, quizás sea
+un proceso más lento.
+\\
+Otro punto a considerarse como desventaja es el hecho de tener un enfoque
+demasiado autoritario. No dejar que los miembros del equipo sean capaces de
+tomar sus propias decisiones, analizar los resultados y luego proponer
+soluciones, va a debilitar su motivación así como su sensación de impacto.
+Considero que la posición que debería tomar como SM es más de acompañamiento o
+consejero, ayudando a ampliar el punto de vista. En este sentido, suponiendo que
+tengo cierta experiencia en el mundo de SM, seguramente seré capaz de tener en
+cuenta detalles que se les pueden escapar al equipo. De este modo, el equipo
+será capaz de tomar sus propias decisiones, con la mi ayuda, reduciendo de ese
+modo el autoritarismo.
+\\[8pt]
+A nivel de ventajas, creo que puede llegar a ser interesante mantener la
+jerarquia porqué voy a ser visto con más poder a la hora de resolución de
+problemas y organización. Al ser uno de los superiores del equipo, voy a tener
+cierto impacto sobre la resolución de problemas con el equipo o individuales.
+\\
+Quizás el más importante es el impacto que voy a poder tener, siempre y cuando
+sea respetado como SM, para poder facilitar el cambio cultural. Voy a poder
+tener más capacidad de establecer cambios culturales, ya que tendré más
+influencia sobre los demás integrantes del grupo. No hace falta decir que ambas
+partes deben respetarse mutuamente, ya que de otra forma solo va a incrementar
+el malestar general a nivel de equipo.
+\\[8pt]
+Aún así, considero que el SM no debería verse como una posición superior en la
+jerarquia, de la misma forma que se puede ver el rol the Team Lead. De ser por
+mi, fomentaría una visión más horizontal del equipo y de sus miembros. También,
+intentaría que se fomentara el feedback y la mejora contínua, con la
+colaboración de todos los miembros del equipo. Si un miembro ve que sus
+propuestas o decisiones tienen impacto tanto a corto como a largo plazo, va a
+sentirse más integrado.
+\\
+Entrando más a mis experiencias como desarrollador dentro de un equipo, creo que
+quizás el punto que más debe evitar un SM es el de intentar ser autoritario.
+Desmotiva bastante al personal y directamente bloqueas la capacidad de
+cooperación y colaboración que estos puedan llegar a tener tanto como equipo,
+como con el SM.
+\\
+En conclusión, el SM no debería presentarse como una posición superior y
+autoritaria, sino como otro rol en el equipo con diferentes funciones.
+\subsection{Problema 2}
+Tal y como he comentado en el último párrafo del primer problema, es importante
+destacar que el SM tendrá diferentes funciones a la de los desarrolladores (no
+está especificado en el problema, pero he supuesto que se trata de un equipo de
+desarrollo, pues es el área en la que trabajo). De la misma forma que un miembro
+o miembra sénior de la parte de frontend va a tener su poder de decisión y
+respeto en ciertos aspectos (por ejemplo, en el refinement de tíquets
+relacionados con el FE), yo como SM voy a tener unos otros. Pues el principal
+objetivo sería determinar que es lo que cada desarrollador o desarrolladora
+espera de mi persona. Además, va a ser igual de importante determinar el rol de
+los integrantes, para poder detectar en que partes carece el equipo. La detección
+de dichas carencias va a servirme para poder determinar otras áreas de impacto
+para los integrantes. De esta forma, si un integrate quiere asumir más
+responsabilidad dentro del equipo, puede llegar a cubrir dicha carencia.
+\\
+Si el equipo lleva tiempo con conflictos, será importante que cada miembro, en
+un entorno aislado y sin juicios, pueda comentar los problemas que ve
+actualmente. Además, se les debe brindar la oportunidad de proponer mejoras,
+incluso si parecen drásticas. Como Scrum Master, deberé recopilar todos estos
+problemas y posibles soluciones, y analizar con el equipo qué se puede mejorar y
+cómo. En caso de encontrar más problemas individuales, consideraré trabajar con
+los miembros que generen estos problemas. En caso de encontrar más problemas
+grupales, fomentar las retrospectivas va a ayudar a mejorar semana a semana
+todos estos problemas.
+\\
+Finalmente, creo que también es necesario el componente humano. Como ya comenté
+en la sesión 7, en el ejercicio de solucionar los problemas de los bomberos, soy
+bastante partidario de los team events y de generar equipo fuera del ambiente de
+trabajo. Con estos eventos no espero que salgan relaciones de por vida, pero sí
+rebajar la tensión que pueda haber ente miembors y fomentar la confianza. Aunque
+en una sesión de coaching puede ser complicado, quizás intentaría encontrar un
+momento para hacer una partida de billar o algo similar, fuera del trabajo, para
+tener está sesión.
+\subsection{Problema 3}
+Suponiendo que como SM he sido capaz de encontrar ciertos patrones a los
+problemas tras las sesiones individuales y después de estar en los eventos de
+equipo como las dailies, considero que me deberé esfozar en fomentar el feedback
+constructivo. Es decir, deberé facilitar o guiar diferentes sesiones, a lo largo
+de cierto tiempo, donde los miembros del equipo puedan expresarse y
+conjuntamente darse cuenta de los problemas que existen, y proponer soluciones.
+\\
+Estás mejoras van a verse directamente reflejadas en la comunicación,
+cooperación y proactividad de los miembros del equipo. UNa vez solucionados
+estos problemas, ejercicios de establecimiento de objetivos globales o a nivel
+de equipo van a ser más fáciles. Creo que, si no hay confianza, colaboración o
+intención de cooperación, no es posible establecer objetivos reales a nivel de
+equipo.
+\\
+Establecer objetivos reales es tan importante como la revisión de estos.
+Objetivos que no son revisados o actualizados, terminan por perder importancia a
+nivel de equipo, a demás de disminuir la motivación y el setimiento de
+implicación. En las siguiente retrospectivas, el equipo deberá dedicar parte de
+la sesión a dicha revisión y valoración. Es importante generar un espacio
+abierto donde cuantos más integrantes interactúen, mejor.
+\end{document}
